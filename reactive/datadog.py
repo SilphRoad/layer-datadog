@@ -9,9 +9,10 @@ from charms.reactive import (
 )
 
 from charmhelpers.core.host import service_restart
+from charmhelpers.core.hookenv import config
 from charmhelpers.core.templating import render
 
-from charm import apt
+from charms import apt
 
 
 @when_not('apt.installed.datadog-agent')
@@ -31,7 +32,7 @@ def configure():
         }
     )
 
-    service_restart('dd-agent')
+    service_restart('datadog-agent')
     set_state('datadog.configured')
 
 
