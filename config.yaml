@@ -1,0 +1,11 @@
+options:
+  api-key:
+    type: string
+    default: ""
+    description: "Datadog API key for your account"
+  install_sources:
+    default: >
+      - deb https://apt.datadoghq.com/ stable main
+  install_keys:
+    default: >
+      - C7A7DA52

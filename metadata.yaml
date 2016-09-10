@@ -1,0 +1,16 @@
+name: datadog
+summary: Datadog agent
+maintainers:
+ - Marco Ceppi <marco@ceppi.net>
+description: |
+  <Multi-line description here>
+tags:
+  - monitoring
+  - metrics
+series:
+  - xenial
+  - trusty
+subordinate: true
+requires:
+  php-fpm:
+    interface: php-fpm-stats

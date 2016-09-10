@@ -1,0 +1,8 @@
+includes:
+ - 'layer:basic'
+ - 'layer:apt'
+ - 'interface:php-fpm-stats'
+options:
+  basic:
+    packages:
+     - apt-transport-https
