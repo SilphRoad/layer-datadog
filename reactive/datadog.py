@@ -1,9 +1,11 @@
 
+import os
 import yaml
 
 from charms.reactive import (
      when,
      when_not,
+     is_state,
      set_state,
      remove_state,
      RelationBase,
@@ -13,6 +15,7 @@ from charmhelpers.core.host import service_restart
 from charmhelpers.core.hookenv import (
     config,
     metadata,
+    status_set,
 )
 
 from charmhelpers.core.templating import render
@@ -43,6 +46,11 @@ def configure():
     set_state('datadog.configured')
 
 
+@when('config.default.api-key')
+def not_ready():
+    status_set('blocked', 'need a valid api-key')
+
+
 @when('config.changed.api-key')
 def reset_cfg():
     remove_state('datadog.configured')
@@ -54,6 +62,7 @@ def configure_integrations():
     # Use the metadata charm helper to load the metadata.yaml for datadog
     # charm dynamically and parse requires relations
     integrations = metadata().get('requires').keys()
+    restart = False
 
     # Loop over all the integrations defined in the charms metadata and
     # check if they're available (ready to be configured)
@@ -92,6 +101,9 @@ def configure_integrations():
         if inst[0] == config and not new_integration:
             continue  # No changes to configuration, and not a new integration
 
+        status_set('maintenance',
+                   'configuring {} integration'.format(integration))
+
         cfg_file['instances'][0] = config
 
         # Write configuration file
@@ -102,3 +114,5 @@ def configure_integrations():
 
     if restart:
         service_restart('dd-agent')
+
+    status_set('active', 'ready')
