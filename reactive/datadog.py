@@ -68,23 +68,26 @@ def configure_integrations():
     # check if they're available (ready to be configured)
     for integration in integrations:
         new_integration = False
+        safe_name = integration.replace('-', '_')
+
         example_file = os.path.join(DATADOG_CONFD,
-                                    '{}.yaml.example'.format(integration))
+                                    '{}.yaml.example'.format(safe_name))
 
         # Make sure this integration exists and the relation is available
         if not os.path.exists(example_file):
             continue
 
-        if not is_state('{}.available'.format(integration)):
-            continue
-
         # Load up the interfaces from reactive, extract the goodies and write
         # out configuration files
-        rel = RelationBase.from_state(integration)
+        rel = RelationBase.from_state('{}.available'.format(integration))
+
+        if not rel:
+            continue
+
         config = rel.configuration()
 
         # Okay, we have configuration data, lets write out the file
-        integration_cfg = os.path.join(DATADOG_CONFD, '{}.yaml'.format(integration))
+        integration_cfg = os.path.join(DATADOG_CONFD, '{}.yaml'.format(safe_name))
         integration_file = integration_cfg
 
         # This is the first time we've written this configuration file
