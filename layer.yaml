@@ -2,6 +2,7 @@ includes:
  - 'layer:basic'
  - 'layer:apt'
  - 'interface:php-fpm-stats'
+ - 'interface:nginx-stats'
 options:
   basic:
     packages:

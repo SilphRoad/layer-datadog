@@ -3,10 +3,11 @@ summary: Datadog agent
 maintainers:
  - Marco Ceppi <marco@ceppi.net>
 description: |
-  <Multi-line description here>
+  Monitoring that tracks your dynamic infrastructure.
 tags:
   - monitoring
   - metrics
+  - saas
 series:
   - xenial
   - trusty
@@ -14,4 +15,10 @@ subordinate: true
 requires:
   php-fpm:
     interface: php-fpm-stats
+    scope: container
+  nginx:
+    interface: nginx-stats
+    scope: container
+  machine:
+    interface: juju-info
     scope: container
