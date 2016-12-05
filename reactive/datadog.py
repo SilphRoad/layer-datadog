@@ -84,6 +84,9 @@ def configure_integrations():
         if not rel:
             continue
 
+        if not hasattr(rel, 'configuration')
+            continue
+
         config = rel.configuration()
 
         # Okay, we have configuration data, lets write out the file
