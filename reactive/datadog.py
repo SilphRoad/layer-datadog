@@ -62,7 +62,7 @@ def configure_integrations():
 
     # Loop over all the integrations defined in the charms metadata and
     # check if they're available (ready to be configured)
-    log('Processing the following integrations: {}'.format(','.join(integrations))
+    log('Processing the following integrations: {}'.format(','.join(integrations)))
     for integration in integrations:
         log('Processing {} integration'.format(integration))
         safe_name = integration.replace('-', '_')
