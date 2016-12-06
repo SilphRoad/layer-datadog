@@ -1,28 +1,24 @@
 
-import os
-import yaml
+from charms import apt
+from charms.layer import datadog
 
 from charms.reactive import (
-     when,
-     when_not,
-     is_state,
-     set_state,
-     remove_state,
-     RelationBase,
+    when,
+    when_not,
+    set_state,
+    remove_state,
+    RelationBase,
 )
 
 from charmhelpers.core.host import service_restart
+from charmhelpers.core.templating import render
+
 from charmhelpers.core.hookenv import (
     config,
     metadata,
     status_set,
+    log,
 )
-
-from charmhelpers.core.templating import render
-from charms import apt
-
-
-DATADOG_CONFD = '/etc/dd-agent/conf.d'
 
 
 @when_not('apt.installed.datadog-agent')
@@ -58,7 +54,7 @@ def reset_cfg():
 
 @when('datadog.configured')
 def configure_integrations():
-    """Configure all connected integrations currently available"""
+    """Configure all connected stats integrations currently available"""
     # Use the metadata charm helper to load the metadata.yaml for datadog
     # charm dynamically and parse requires relations
     integrations = metadata().get('requires').keys()
@@ -66,16 +62,10 @@ def configure_integrations():
 
     # Loop over all the integrations defined in the charms metadata and
     # check if they're available (ready to be configured)
+    log('Processing the following integrations: {}'.format(','.join(integrations))
     for integration in integrations:
-        new_integration = False
+        log('Processing {} integration'.format(integration))
         safe_name = integration.replace('-', '_')
-
-        example_file = os.path.join(DATADOG_CONFD,
-                                    '{}.yaml.example'.format(safe_name))
-
-        # Make sure this integration exists and the relation is available
-        if not os.path.exists(example_file):
-            continue
 
         # Load up the interfaces from reactive, extract the goodies and write
         # out configuration files
@@ -84,37 +74,10 @@ def configure_integrations():
         if not rel:
             continue
 
-        if not hasattr(rel, 'configuration')
+        if not hasattr(rel, 'configuration'):
             continue
 
-        config = rel.configuration()
-
-        # Okay, we have configuration data, lets write out the file
-        integration_cfg = os.path.join(DATADOG_CONFD, '{}.yaml'.format(safe_name))
-        integration_file = integration_cfg
-
-        # This is the first time we've written this configuration file
-        # Load from the .example file for defaults, force restart
-        if not os.path.exists(integration_file):
-            integration_file = example_file
-            new_integration = True
-
-        # Load existing datadog configuration
-        with open(integration_file) as f:
-            cfg_file = yaml.safe_load(f.read())
-
-        inst = cfg_file.get('instances', [])
-        if inst[0] == config and not new_integration:
-            continue  # No changes to configuration, and not a new integration
-
-        status_set('maintenance',
-                   'configuring {} integration'.format(integration))
-
-        cfg_file['instances'][0] = config
-
-        # Write configuration file
-        with open(integration_cfg, 'w') as f:
-            f.write(yaml.safe_dump(cfg_file, default_flow_style=False))
+        datadog.configure_integration(safe_name, rel.configuration())
 
         restart = True
 
