@@ -3,6 +3,7 @@ includes:
  - 'layer:apt'
  - 'interface:php-fpm-stats'
  - 'interface:nginx-stats'
+ - 'interface:redis-stats'
 options:
   basic:
     packages:

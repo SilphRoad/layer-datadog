@@ -13,6 +13,9 @@ series:
   - trusty
 subordinate: true
 requires:
+  redis:
+    interface: redis-stats
+    scope: container
   php-fpm:
     interface: php-fpm-stats
     scope: container
