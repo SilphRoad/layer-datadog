@@ -4,6 +4,7 @@ includes:
  - 'interface:php-fpm-stats'
  - 'interface:nginx-stats'
  - 'interface:redis-stats'
+ - 'interface:elasticsearch-stats'
 options:
   basic:
     packages:
