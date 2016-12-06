@@ -13,6 +13,15 @@ series:
   - trusty
 subordinate: true
 requires:
+  redis:
+    interface: redis-stats
+    scope: container
+  postgresql:
+    interface: postgresql-stats
+    scope: container
+  elasticsearch:
+    interface: elasticsearch-stats
+    scope: container
   php-fpm:
     interface: php-fpm-stats
     scope: container

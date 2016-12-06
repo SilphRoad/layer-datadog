@@ -3,6 +3,9 @@ includes:
  - 'layer:apt'
  - 'interface:php-fpm-stats'
  - 'interface:nginx-stats'
+ - 'interface:redis-stats'
+ - 'interface:elasticsearch-stats'
+ - 'interface:postgresql-stats'
 options:
   basic:
     packages:
